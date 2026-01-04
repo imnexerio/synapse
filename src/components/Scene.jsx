@@ -40,7 +40,6 @@ export default function Scene() {
           rotateSpeed={-0.5}
           zoomSpeed={0.5}
           target={[0, 0, 0]}
-          reverseOrbit={true}
         />
       )}
     </Canvas>
