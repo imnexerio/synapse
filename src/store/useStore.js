@@ -54,17 +54,36 @@ const calculatePositions = (visibleTopics, focusedId) => {
   });
   
   // Position each degree level on spherical bands
-  // Degree 1: near south pole, Degree 2: middle band, Degree 3: near equator
+  // Degree 1: South pole to equator (theta 180° to 90°)
+  // Degree 2: 45°S to 30°N (theta 135° to 60°)
+  // Degree 3: Near north pole (theta 15° to 0°)
   Object.keys(byDegree).forEach(deg => {
     const nodes = byDegree[deg];
     const degNum = parseInt(deg);
     const count = nodes.length;
     
-    // Polar angle (theta): 0 = north pole, PI/2 = equator, PI = south pole
-    // Spread nodes more: degree 1 at ~150°, degree 2 at ~120°, degree 3 at ~90° (equator)
-    const theta = Math.PI - (degNum * 0.5); // Larger steps for more spread
+    // Define theta ranges for each degree (in radians)
+    // Latitude to theta: theta = 90° - latitude (in degrees), then convert to radians
+    let thetaMin, thetaMax;
+    if (degNum === 1) {
+      // South pole (180°) to equator (90°)
+      thetaMin = Math.PI / 2;      // 90° = equator
+      thetaMax = Math.PI;           // 180° = south pole
+    } else if (degNum === 2) {
+      // 45°S (135°) to 30°N (60°)
+      thetaMin = Math.PI / 3;       // 60° = 30°N
+      thetaMax = Math.PI * 0.75;    // 135° = 45°S
+    } else {
+      // Near north pole: 15° to 0° theta (75°N to 90°N)
+      thetaMin = 0;                 // 0° = north pole
+      thetaMax = Math.PI / 12;      // 15° = 75°N
+    }
     
     nodes.forEach((topic, i) => {
+      // Distribute theta within the range
+      const thetaRange = thetaMax - thetaMin;
+      const theta = thetaMin + (thetaRange * (i + 0.5) / count);
+      
       // Azimuthal angle (phi): distribute evenly around the sphere
       const phi = (i / count) * Math.PI * 2;
       
