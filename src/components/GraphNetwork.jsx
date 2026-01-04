@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import TopicNode from './TopicNode';
-import ConnectionLines from './ConnectionLines';
 import useStore from '../store/useStore';
 
 export default function GraphNetwork() {
@@ -16,7 +15,6 @@ export default function GraphNetwork() {
   
   return (
     <group>
-      <ConnectionLines />
       {visibleNodes.map((topic) => (
         <TopicNode key={topic.id} topic={topic} />
       ))}

@@ -3,6 +3,7 @@ import DegreeToggle from './ui/DegreeToggle';
 import FilterPanel from './ui/FilterPanel';
 import TopicModal from './ui/TopicModal';
 import GyroToggle from './ui/GyroToggle';
+import FullscreenToggle from './ui/FullscreenToggle';
 import useStore from './store/useStore';
 import './ui/UI.css';
 
@@ -22,6 +23,11 @@ function App() {
       <div className="info-box">
         <h1>🌐 Synapse</h1>
         <p>{gyroEnabled ? 'Tilt device to look around' : 'Drag to rotate • Scroll to zoom'} • Click nodes</p>
+      </div>
+      
+      {/* Top right controls */}
+      <div className="top-right-controls">
+        <FullscreenToggle />
       </div>
       
       {/* Gyro Toggle */}

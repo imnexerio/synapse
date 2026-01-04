@@ -57,9 +57,31 @@
 /* Filter Panel */
 .filter-panel {
   background: rgba(0, 0, 0, 0.7);
-  padding: 15px;
   border-radius: 15px;
   backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.filter-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 15px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-arrow {
+  font-size: 10px;
+  opacity: 0.6;
 }
 
 .filter-header {
@@ -67,6 +89,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  padding: 0 15px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
 }
@@ -83,6 +106,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding: 0 15px 15px 15px;
 }
 
 .tag-chip {
@@ -300,5 +324,49 @@
 }
 
 .gyro-toggle.active .gyro-label {
+  color: #4ECDC4;
+}
+
+/* Top right controls */
+.top-right-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+/* Fullscreen Toggle */
+.fullscreen-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.fullscreen-toggle.active {
+  background: rgba(78, 205, 196, 0.3);
+  border-color: #4ECDC4;
+}
+
+.fullscreen-icon {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.fullscreen-toggle.active .fullscreen-icon {
   color: #4ECDC4;
 }
