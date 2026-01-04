@@ -257,3 +257,48 @@
   color: white;
   font-size: 14px;
 }
+
+/* Gyro Toggle */
+.gyro-container {
+  position: fixed;
+  top: 90px;
+  left: 20px;
+  z-index: 100;
+}
+
+.gyro-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 16px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.gyro-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.gyro-toggle.active {
+  background: rgba(78, 205, 196, 0.3);
+  border-color: #4ECDC4;
+}
+
+.gyro-icon {
+  font-size: 18px;
+}
+
+.gyro-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.gyro-toggle.active .gyro-label {
+  color: #4ECDC4;
+}

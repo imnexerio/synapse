@@ -2,11 +2,20 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Environment360 from './Environment360';
 import GraphNetwork from './GraphNetwork';
+import DeviceOrientationControls from './DeviceOrientationControls';
+import useStore from '../store/useStore';
 
 export default function Scene() {
+  const gyroEnabled = useStore((s) => s.gyroEnabled);
+  
   return (
     <Canvas
-      camera={{ position: [0, 2, 12], fov: 60 }}
+      camera={{ 
+        position: [0, 0, 0.1], // Slightly off center so OrbitControls works
+        fov: 75,
+        near: 0.1,
+        far: 20000
+      }}
       style={{ background: '#000' }}
     >
       {/* Lighting */}
@@ -19,14 +28,21 @@ export default function Scene() {
       {/* Graph */}
       <GraphNetwork />
       
-      {/* Controls - drag to rotate, scroll to zoom */}
-      <OrbitControls
-        enablePan={false}
-        minDistance={3}
-        maxDistance={20}
-        rotateSpeed={0.5}
-        zoomSpeed={0.5}
-      />
+      {/* Controls - touch or gyroscope */}
+      {gyroEnabled ? (
+        <DeviceOrientationControls enabled={gyroEnabled} />
+      ) : (
+        <OrbitControls
+          enablePan={false}
+          enableZoom={true}
+          minDistance={0.1}
+          maxDistance={15}
+          rotateSpeed={-0.5}
+          zoomSpeed={0.5}
+          target={[0, 0, 0]}
+          reverseOrbit={true}
+        />
+      )}
     </Canvas>
   );
 }

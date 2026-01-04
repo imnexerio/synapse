@@ -62,7 +62,7 @@ export default function Environment360() {
       
       {/* Ambient glow */}
       <mesh>
-        <sphereGeometry args={[100, 32, 32]} />
+        <sphereGeometry args={[10000, 32, 32]} />
         <meshBasicMaterial
           color="#0a0a20"
           side={THREE.BackSide}

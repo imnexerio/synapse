@@ -30,15 +30,18 @@ const calculateDegrees = (focusedId, allTopics) => {
   return degrees;
 };
 
-// Position nodes in 3D spherical space - focus at bottom, branches go up
+// Sphere radius (think of 1 unit = 1 foot, so 10 = 10 feet)
+const SPHERE_RADIUS = 20;
+
+// Position nodes on a TRUE sphere - focus at south pole, others spread on surface
 const calculatePositions = (visibleTopics, focusedId) => {
   const positions = new Map();
   const focusedTopic = visibleTopics.find(t => t.id === focusedId);
   
   if (!focusedTopic) return positions;
   
-  // Focus node at bottom center
-  positions.set(focusedId, [0, -3, 0]);
+  // Focus node at bottom (south pole) of sphere
+  positions.set(focusedId, [0, -SPHERE_RADIUS, 0]);
   
   // Group by degree
   const byDegree = {};
@@ -50,30 +53,36 @@ const calculatePositions = (visibleTopics, focusedId) => {
     }
   });
   
-  // Position each degree level on a sphere going upward
+  // Position each degree level on spherical bands
+  // Degree 1: near south pole, Degree 2: middle band, Degree 3: near equator
   Object.keys(byDegree).forEach(deg => {
     const nodes = byDegree[deg];
     const degNum = parseInt(deg);
     const count = nodes.length;
     
-    // Each degree level goes higher and spreads out more
-    const baseY = -3 + degNum * 2.5; // Move up with each degree
-    const radius = 2 + degNum * 1.5; // Spread out more with each degree
+    // Polar angle (theta): 0 = north pole, PI/2 = equator, PI = south pole
+    // Spread nodes more: degree 1 at ~150°, degree 2 at ~120°, degree 3 at ~90° (equator)
+    const theta = Math.PI - (degNum * 0.5); // Larger steps for more spread
     
     nodes.forEach((topic, i) => {
-      // Distribute around a sphere segment
-      const angleH = (i / count) * Math.PI * 2; // Horizontal angle
-      const angleV = Math.PI * 0.3 * (1 - degNum * 0.1); // Vertical tilt
+      // Azimuthal angle (phi): distribute evenly around the sphere
+      const phi = (i / count) * Math.PI * 2;
       
-      // Add some randomness for organic feel
-      const jitterX = (Math.random() - 0.5) * 0.5;
-      const jitterY = (Math.random() - 0.5) * 0.5;
-      const jitterZ = (Math.random() - 0.5) * 0.5;
+      // Add small jitter for organic feel
+      const jitterTheta = (Math.random() - 0.5) * 0.2;
+      const jitterPhi = (Math.random() - 0.5) * 0.3;
       
+      const finalTheta = theta + jitterTheta;
+      const finalPhi = phi + jitterPhi;
+      
+      // Spherical to Cartesian coordinates
+      // X = r * sin(θ) * cos(φ)
+      // Y = r * cos(θ)  (Y is up in Three.js)
+      // Z = r * sin(θ) * sin(φ)
       positions.set(topic.id, [
-        Math.cos(angleH) * radius * Math.sin(angleV) + jitterX,
-        baseY + jitterY,
-        Math.sin(angleH) * radius * Math.sin(angleV) + jitterZ
+        SPHERE_RADIUS * Math.sin(finalTheta) * Math.cos(finalPhi),
+        SPHERE_RADIUS * Math.cos(finalTheta),
+        SPHERE_RADIUS * Math.sin(finalTheta) * Math.sin(finalPhi)
       ]);
     });
   });
@@ -90,6 +99,10 @@ const useStore = create((set, get) => ({
   maxDegree: 1,
   activeTagFilters: [],
   selectedNode: null,
+  gyroEnabled: false,
+  
+  // Toggle gyro
+  toggleGyro: () => set((state) => ({ gyroEnabled: !state.gyroEnabled })),
   
   // Set focused node
   setFocusedNode: (id) => set({ focusedNodeId: id }),

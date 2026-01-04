@@ -2,12 +2,14 @@ import Scene from './components/Scene';
 import DegreeToggle from './ui/DegreeToggle';
 import FilterPanel from './ui/FilterPanel';
 import TopicModal from './ui/TopicModal';
+import GyroToggle from './ui/GyroToggle';
 import useStore from './store/useStore';
 import './ui/UI.css';
 
 function App() {
   const topics = useStore((s) => s.topics);
   const focusedNodeId = useStore((s) => s.focusedNodeId);
+  const gyroEnabled = useStore((s) => s.gyroEnabled);
   
   const focusedTopic = topics.find((t) => t.id === focusedNodeId);
 
@@ -19,7 +21,12 @@ function App() {
       {/* Title */}
       <div className="info-box">
         <h1>🌐 Synapse</h1>
-        <p>Drag to rotate • Scroll to zoom • Click nodes</p>
+        <p>{gyroEnabled ? 'Tilt device to look around' : 'Drag to rotate • Scroll to zoom'} • Click nodes</p>
+      </div>
+      
+      {/* Gyro Toggle */}
+      <div className="gyro-container">
+        <GyroToggle />
       </div>
       
       {/* Current focus indicator */}
