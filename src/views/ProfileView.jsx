@@ -92,8 +92,8 @@ export default function ProfileView() {
       <section className="profile-section">
         <h2>About Synapse</h2>
         <p className="about-text">
-          A knowledge graph app for UPSC aspirants to track and connect daily news topics.
-          Visualize relationships between current affairs to better understand the big picture.
+          A visual knowledge graph to track topics, ideas, and their connections.
+          See how concepts relate through interactive 3D visualization.
         </p>
       </section>
     </div>

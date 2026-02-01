@@ -1,8 +1,8 @@
 # Synapse
 
-A knowledge graph PWA for UPSC aspirants to track and connect daily news topics. Visualize relationships between current affairs to better understand the big picture.
+A visual knowledge graph app to track topics, ideas, and their connections. See how concepts relate to each other through an interactive 3D visualization.
 
-![Synapse](public/icons/icon.png)
+![Synapse](public/icons/icon-512.png)
 
 ## Features
 

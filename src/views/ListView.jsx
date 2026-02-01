@@ -30,7 +30,7 @@ export default function ListView() {
         <div className="empty-state">
           <span className="empty-icon">📝</span>
           <h2>No topics yet</h2>
-          <p>Add your first news topic to get started</p>
+          <p>Add your first topic to get started</p>
         </div>
       </div>
     );
