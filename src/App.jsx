@@ -36,8 +36,8 @@ function App() {
   if (authLoading) {
     return (
       <div className="app-container auth-loading">
+        <img src="/icons/icon-512.png" alt="Synapse" className="loading-logo" />
         <div className="loading-spinner" />
-        <p>Loading...</p>
       </div>
     );
   }
@@ -78,7 +78,7 @@ function App() {
         <>
           {/* Title */}
           <div className="info-box">
-            <h1>🌐 Synapse</h1>
+            <h1><img src="/icons/icon-512.png" alt="" className="info-box-icon" /> Synapse</h1>
             <p>
               {activeTab === 'sphere'
                 ? (gyroEnabled ? 'Tilt device to look around' : 'Drag to rotate • Scroll to zoom')

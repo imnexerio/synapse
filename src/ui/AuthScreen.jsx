@@ -72,7 +72,7 @@ export default function AuthScreen() {
       <div className="auth-container">
         {/* Logo */}
         <div className="auth-header">
-          <span className="auth-logo">🌐</span>
+          <img src="/icons/icon-512.png" alt="Synapse" className="auth-logo" />
           <h1>Synapse</h1>
           <p>Connect your knowledge</p>
         </div>
