@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { getAllTags } from '../data/topics';
 import useStore from '../store/useStore';
 import './UI.css';
 
 export default function FilterPanel() {
   const [isOpen, setIsOpen] = useState(false);
+  const getAllTags = useStore((s) => s.getAllTags);
   const allTags = getAllTags();
   const activeTagFilters = useStore((s) => s.activeTagFilters);
   const toggleTagFilter = useStore((s) => s.toggleTagFilter);

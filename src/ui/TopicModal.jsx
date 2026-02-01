@@ -1,4 +1,5 @@
 import useStore from '../store/useStore';
+import { getTopicColor } from '../utils/colorGenerator';
 import './UI.css';
 
 export default function TopicModal() {
@@ -6,28 +7,30 @@ export default function TopicModal() {
   const topics = useStore((s) => s.topics);
   const closeModal = useStore((s) => s.closeModal);
   const setFocusedNode = useStore((s) => s.setFocusedNode);
-  
+
   if (!selectedNode) return null;
-  
+
   const topic = topics.find((t) => t.id === selectedNode);
   if (!topic) return null;
-  
+
+  const topicColor = getTopicColor(topic);
+
   // Find related topics
   const related = topics.filter(
     (t) => t.id !== topic.id && t.tags.some((tag) => topic.tags.includes(tag))
   ).slice(0, 5);
-  
+
   const handleRelatedClick = (id) => {
     setFocusedNode(id);
     closeModal();
   };
-  
+
   return (
     <div className="modal-overlay" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={closeModal}>×</button>
-        
-        <div className="modal-header" style={{ borderLeftColor: topic.color }}>
+
+        <div className="modal-header" style={{ borderLeftColor: topicColor }}>
           <h2>{topic.title}</h2>
           <div className="modal-tags">
             {topic.tags.map((tag) => (
@@ -35,9 +38,13 @@ export default function TopicModal() {
             ))}
           </div>
         </div>
-        
+
         <p className="modal-description">{topic.description}</p>
-        
+
+        {topic.date && (
+          <p className="modal-date">📅 {topic.date}</p>
+        )}
+
         {related.length > 0 && (
           <div className="modal-related">
             <h3>Related Topics</h3>
@@ -46,7 +53,7 @@ export default function TopicModal() {
                 <button
                   key={r.id}
                   className="related-item"
-                  style={{ borderLeftColor: r.color }}
+                  style={{ borderLeftColor: getTopicColor(r) }}
                   onClick={() => handleRelatedClick(r.id)}
                 >
                   {r.title}
