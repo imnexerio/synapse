@@ -87,10 +87,9 @@ const calculatePositions = (visibleTopics, focusedId) => {
       // Azimuthal angle (phi): distribute evenly around the sphere
       const phi = (i / count) * Math.PI * 2;
       
-      // Add small jitter for organic feel (seeded by topic id for consistency)
-      const seed = topic.id * 137.5;
-      const jitterTheta = (Math.sin(seed) * 0.5) * 0.2;
-      const jitterPhi = (Math.cos(seed) * 0.5) * 0.3;
+      // Add small jitter for organic feel
+      const jitterTheta = (Math.random() - 0.5) * 0.2;
+      const jitterPhi = (Math.random() - 0.5) * 0.3;
       
       const finalTheta = theta + jitterTheta;
       const finalPhi = phi + jitterPhi;
@@ -178,37 +177,20 @@ const useStore = create((set, get) => ({
     }));
   },
   
-  // Get connections - only from focus node to degree 1, and between adjacent degrees
+  // Get connections between visible nodes
   getConnections: () => {
     const visibleNodes = get().getVisibleNodes();
-    const focusedNodeId = get().focusedNodeId;
     const connections = [];
-    const added = new Set();
     
-    const focusNode = visibleNodes.find(n => n.id === focusedNodeId);
-    if (!focusNode) return connections;
-    
-    // Only connect nodes that are adjacent in degree (0→1, 1→2, 2→3)
     for (let i = 0; i < visibleNodes.length; i++) {
       for (let j = i + 1; j < visibleNodes.length; j++) {
-        const nodeA = visibleNodes[i];
-        const nodeB = visibleNodes[j];
-        const degreeDiff = Math.abs((nodeA.degree || 0) - (nodeB.degree || 0));
-        
-        // Only connect adjacent degrees AND they must share a tag
-        if (degreeDiff === 1) {
-          const shared = getSharedTags(nodeA, nodeB);
-          if (shared.length > 0) {
-            const key = `${Math.min(nodeA.id, nodeB.id)}-${Math.max(nodeA.id, nodeB.id)}`;
-            if (!added.has(key)) {
-              added.add(key);
-              connections.push({
-                from: nodeA,
-                to: nodeB,
-                sharedTags: shared
-              });
-            }
-          }
+        const shared = getSharedTags(visibleNodes[i], visibleNodes[j]);
+        if (shared.length > 0) {
+          connections.push({
+            from: visibleNodes[i],
+            to: visibleNodes[j],
+            sharedTags: shared
+          });
         }
       }
     }

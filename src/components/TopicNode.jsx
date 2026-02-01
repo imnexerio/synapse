@@ -1,26 +1,25 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Billboard, Text } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import useStore from '../store/useStore';
 
-// Colors based on degree - easy to identify hierarchy visually
-const DEGREE_COLORS = {
-  0: '#FF6B6B', // Focus - Red/Coral (most important)
-  1: '#4ECDC4', // Degree 1 - Teal
-  2: '#A29BFE', // Degree 2 - Purple  
-  3: '#FFEAA7', // Degree 3 - Yellow
-};
-
 export default function TopicNode({ topic }) {
+  const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
   
   const focusedNodeId = useStore((s) => s.focusedNodeId);
+  const setFocusedNode = useStore((s) => s.setFocusedNode);
   const selectNode = useStore((s) => s.selectNode);
   
   const isFocused = topic.id === focusedNodeId;
   const scale = isFocused ? 1.2 : hovered ? 1.1 : 1;
   
-  // Use degree-based color
-  const cardColor = DEGREE_COLORS[topic.degree] || DEGREE_COLORS[3];
+  // Gentle floating animation
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.position.y = topic.position[1] + Math.sin(state.clock.elapsedTime + topic.id) * 0.1;
+    }
+  });
   
   const handleClick = (e) => {
     e.stopPropagation();
@@ -30,6 +29,7 @@ export default function TopicNode({ topic }) {
   
   return (
     <group
+      ref={meshRef}
       position={topic.position}
       scale={scale}
       onClick={handleClick}
@@ -41,7 +41,7 @@ export default function TopicNode({ topic }) {
         <mesh>
           <planeGeometry args={[2.5, 1.2]} />
           <meshBasicMaterial
-            color={cardColor}
+            color={topic.color}
             transparent
             opacity={isFocused ? 0.95 : 0.85}
           />

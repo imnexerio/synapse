@@ -2,14 +2,6 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import useStore from '../store/useStore';
 
-// Colors for each degree level connection
-const DEGREE_COLORS = {
-  0: '#FF6B6B', // Focus to Degree 1 - Red/Coral
-  1: '#4ECDC4', // Degree 1 to 2 - Teal
-  2: '#A29BFE', // Degree 2 to 3 - Purple
-  3: '#FFEAA7', // Degree 3+ - Yellow
-};
-
 // Create a curved arc between two points on a sphere using proper slerp
 function createArc(from, to, segments = 32) {
   const points = [];
@@ -66,10 +58,7 @@ export default function ConnectionLines() {
     return connections.map(({ from, to }, index) => {
       const arcPoints = createArc(from.position, to.position, 24);
       const curve = new THREE.CatmullRomCurve3(arcPoints);
-      // Use the lower degree to determine color (connection "belongs" to the closer node)
-      const minDegree = Math.min(from.degree || 0, to.degree || 0);
-      const color = DEGREE_COLORS[minDegree] || DEGREE_COLORS[3];
-      return { curve, key: `${from.id}-${to.id}-${index}`, color };
+      return { curve, key: `${from.id}-${to.id}-${index}` };
     });
   }, [connections]);
   
@@ -77,13 +66,13 @@ export default function ConnectionLines() {
   
   return (
     <group>
-      {curves.map(({ curve, key, color }) => (
+      {curves.map(({ curve, key }) => (
         <mesh key={key}>
-          <tubeGeometry args={[curve, 24, 0.03, 8, false]} />
+          <tubeGeometry args={[curve, 24, 0.02, 8, false]} />
           <meshBasicMaterial
-            color={color}
+            color="#ffffff"
             transparent
-            opacity={0.5}
+            opacity={0.2}
           />
         </mesh>
       ))}
