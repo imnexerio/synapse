@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'Synapse',
         short_name: 'Synapse',
-        description: 'Knowledge graph for UPSC aspirants to track and connect daily news topics',
+        description: 'Visual knowledge graph to track topics, ideas, and their connections',
         theme_color: '#0a0a0f',
         background_color: '#0a0a0f',
         display: 'standalone',
