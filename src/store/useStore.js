@@ -172,6 +172,11 @@ const useStore = create((set, get) => ({
   // ============ VIEW STATE ============
   activeTab: 'plane', // 'plane' | 'list' | 'sphere' | 'profile'
   showAddForm: false, // Show/hide add topic modal
+  showSearchPanel: false, // Show/hide search panel
+
+  // ============ SEARCH STATE ============
+  searchQuery: '',
+  searchTagFilters: [], // Separate from activeTagFilters for search
 
   // ============ GRAPH STATE ============
   focusedNodeId: null,
@@ -232,6 +237,19 @@ const useStore = create((set, get) => ({
   // Toggle add form
   openAddForm: () => set({ showAddForm: true }),
   closeAddForm: () => set({ showAddForm: false }),
+
+  // Toggle search panel
+  openSearchPanel: () => set({ showSearchPanel: true }),
+  closeSearchPanel: () => set({ showSearchPanel: false, searchQuery: '', searchTagFilters: [] }),
+
+  // Search actions (filters cached data - no Firebase reads)
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  toggleSearchTagFilter: (tag) => set((state) => ({
+    searchTagFilters: state.searchTagFilters.includes(tag)
+      ? state.searchTagFilters.filter(t => t !== tag)
+      : [...state.searchTagFilters, tag]
+  })),
+  clearSearchFilters: () => set({ searchQuery: '', searchTagFilters: [] }),
 
   // Add new topic (Firebase)
   addTopic: async (topic) => {
@@ -439,6 +457,26 @@ const useStore = create((set, get) => ({
     const tagSet = new Set();
     topics.forEach(topic => topic.tags.forEach(tag => tagSet.add(tag)));
     return Array.from(tagSet).sort();
+  },
+
+  // Get search results (optimistic - filters cached topics, no Firebase reads)
+  getSearchResults: () => {
+    const { topics, searchQuery, searchTagFilters } = get();
+    const query = searchQuery.toLowerCase().trim();
+
+    return topics.filter(topic => {
+      // Text search - matches title, description, or tags
+      const matchesQuery = !query ||
+        topic.title.toLowerCase().includes(query) ||
+        (topic.description?.toLowerCase().includes(query)) ||
+        topic.tags.some(tag => tag.toLowerCase().includes(query));
+
+      // Tag filter - topic must have at least one selected tag
+      const matchesTags = searchTagFilters.length === 0 ||
+        topic.tags.some(tag => searchTagFilters.includes(tag));
+
+      return matchesQuery && matchesTags;
+    });
   }
 }));
 
