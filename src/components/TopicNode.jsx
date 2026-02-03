@@ -14,10 +14,13 @@ export default function TopicNode({ topic }) {
   const isFocused = topic.id === focusedNodeId;
   const scale = isFocused ? 1.2 : hovered ? 1.1 : 1;
   
+  // Create a stable numeric hash from topic.id for animation offset
+  const idHash = topic.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  
   // Gentle floating animation
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.position.y = topic.position[1] + Math.sin(state.clock.elapsedTime + topic.id) * 0.1;
+      meshRef.current.position.y = topic.position[1] + Math.sin(state.clock.elapsedTime + idHash) * 0.1;
     }
   });
   

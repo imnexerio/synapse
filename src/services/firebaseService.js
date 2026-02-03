@@ -122,10 +122,10 @@ export async function addTopic(userId, topic) {
 export async function updateTopic(userId, topicId, updates, oldTags, newTags) {
   if (!userId) throw new Error('User not authenticated');
 
-  // Update topic data
+  // Update topic data with modifiedAt timestamp
   await update(ref(database, `users/${userId}/topics/${topicId}`), {
     ...updates,
-    updatedAt: Date.now()
+    modifiedAt: Date.now()
   });
 
   // Handle tag count changes

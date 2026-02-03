@@ -4,6 +4,7 @@ import {
   subscribeToTopics,
   subscribeToTags,
   addTopic as firebaseAddTopic,
+  updateTopic as firebaseUpdateTopic,
   deleteTopic as firebaseDeleteTopic
 } from '../services/firebaseService';
 import {
@@ -105,40 +106,50 @@ const calculateSpherePositions = (visibleTopics, focusedId) => {
   return positions;
 };
 
-// Position nodes on flat plane for 2D view
+// Position nodes on flat plane for 2D mind map view (radial tree layout)
 const calculatePlanePositions = (visibleTopics, focusedId) => {
   const positions = new Map();
-  const focusedTopic = visibleTopics.find(t => t.id === focusedId);
+  
+  if (visibleTopics.length === 0) return positions;
+  
+  // If no focused topic, pick the first one
+  const actualFocusId = focusedId || visibleTopics[0]?.id;
+  const focusedTopic = visibleTopics.find(t => t.id === actualFocusId);
 
   if (!focusedTopic) return positions;
 
   // Focus node at center
-  positions.set(focusedId, [0, 0, 0]);
+  positions.set(actualFocusId, [0, 0, 0]);
 
   // Group by degree
   const byDegree = {};
   visibleTopics.forEach(topic => {
-    if (topic.id !== focusedId) {
+    if (topic.id !== actualFocusId) {
       const deg = topic.degree || 1;
       if (!byDegree[deg]) byDegree[deg] = [];
       byDegree[deg].push(topic);
     }
   });
 
-  // Position in concentric circles
-  Object.keys(byDegree).forEach(deg => {
+  // Position in concentric circles with consistent spacing
+  const degreeKeys = Object.keys(byDegree).sort((a, b) => parseInt(a) - parseInt(b));
+  
+  degreeKeys.forEach(deg => {
     const nodes = byDegree[deg];
     const degNum = parseInt(deg);
     const count = nodes.length;
-    const radius = degNum * 8; // 8 units per degree level
+    const baseRadius = 6; // Base radius for first degree
+    const radius = baseRadius + (degNum - 1) * 5; // 5 units between each degree level
+    
+    // Calculate starting angle offset for visual balance
+    const angleOffset = degNum * 0.3;
 
     nodes.forEach((topic, i) => {
-      const angle = (i / count) * Math.PI * 2;
-      const jitter = (Math.random() - 0.5) * 2;
+      const angle = angleOffset + (i / count) * Math.PI * 2;
       positions.set(topic.id, [
-        Math.cos(angle) * radius + jitter,
-        0, // Flat on Y=0
-        Math.sin(angle) * radius + jitter
+        Math.cos(angle) * radius,
+        0, // Flat on Y=0 plane
+        Math.sin(angle) * radius
       ]);
     });
   });
@@ -161,6 +172,11 @@ const useStore = create((set, get) => ({
   // ============ VIEW STATE ============
   activeTab: 'plane', // 'plane' | 'list' | 'sphere' | 'profile'
   showAddForm: false, // Show/hide add topic modal
+  showSearchPanel: false, // Show/hide search panel
+
+  // ============ SEARCH STATE ============
+  searchQuery: '',
+  searchTagFilters: [], // Separate from activeTagFilters for search
 
   // ============ GRAPH STATE ============
   focusedNodeId: null,
@@ -222,6 +238,19 @@ const useStore = create((set, get) => ({
   openAddForm: () => set({ showAddForm: true }),
   closeAddForm: () => set({ showAddForm: false }),
 
+  // Toggle search panel
+  openSearchPanel: () => set({ showSearchPanel: true }),
+  closeSearchPanel: () => set({ showSearchPanel: false, searchQuery: '', searchTagFilters: [] }),
+
+  // Search actions (filters cached data - no Firebase reads)
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  toggleSearchTagFilter: (tag) => set((state) => ({
+    searchTagFilters: state.searchTagFilters.includes(tag)
+      ? state.searchTagFilters.filter(t => t !== tag)
+      : [...state.searchTagFilters, tag]
+  })),
+  clearSearchFilters: () => set({ searchQuery: '', searchTagFilters: [] }),
+
   // Add new topic (Firebase)
   addTopic: async (topic) => {
     const { user } = get();
@@ -239,6 +268,22 @@ const useStore = create((set, get) => ({
       console.error('Failed to add topic:', error);
       // Reopen form on error
       set({ showAddForm: true });
+    }
+  },
+
+  // Update existing topic (Firebase)
+  updateTopic: async (topicId, updates, oldTags, newTags) => {
+    const { user } = get();
+    if (!user) {
+      console.error('Cannot update topic: not authenticated');
+      return;
+    }
+
+    try {
+      set({ selectedNode: null });
+      await firebaseUpdateTopic(user.uid, topicId, updates, oldTags, newTags);
+    } catch (error) {
+      console.error('Failed to update topic:', error);
     }
   },
 
@@ -412,6 +457,26 @@ const useStore = create((set, get) => ({
     const tagSet = new Set();
     topics.forEach(topic => topic.tags.forEach(tag => tagSet.add(tag)));
     return Array.from(tagSet).sort();
+  },
+
+  // Get search results (optimistic - filters cached topics, no Firebase reads)
+  getSearchResults: () => {
+    const { topics, searchQuery, searchTagFilters } = get();
+    const query = searchQuery.toLowerCase().trim();
+
+    return topics.filter(topic => {
+      // Text search - matches title, description, or tags
+      const matchesQuery = !query ||
+        topic.title.toLowerCase().includes(query) ||
+        (topic.description?.toLowerCase().includes(query)) ||
+        topic.tags.some(tag => tag.toLowerCase().includes(query));
+
+      // Tag filter - topic must have at least one selected tag
+      const matchesTags = searchTagFilters.length === 0 ||
+        topic.tags.some(tag => searchTagFilters.includes(tag));
+
+      return matchesQuery && matchesTags;
+    });
   }
 }));
 

@@ -10,6 +10,7 @@ import TopicModal from './ui/TopicModal';
 import AddTopicForm from './ui/AddTopicForm';
 import GyroToggle from './ui/GyroToggle';
 import FullscreenToggle from './ui/FullscreenToggle';
+import SearchPanel from './ui/SearchPanel';
 import AuthScreen from './ui/AuthScreen';
 import useStore from './store/useStore';
 import { getTopicColor } from './utils/colorGenerator';
@@ -22,6 +23,7 @@ function App() {
   const gyroEnabled = useStore((s) => s.gyroEnabled);
   const isLoading = useStore((s) => s.isLoading);
   const openAddForm = useStore((s) => s.openAddForm);
+  const openSearchPanel = useStore((s) => s.openSearchPanel);
   const initializeAuth = useStore((s) => s.initializeAuth);
   const user = useStore((s) => s.user);
   const authLoading = useStore((s) => s.authLoading);
@@ -123,9 +125,15 @@ function App() {
         +
       </button>
 
+      {/* Search Button */}
+      <button className="fab search-fab" onClick={openSearchPanel} aria-label="Search topics">
+        🔍
+      </button>
+
       {/* Modals */}
       <TopicModal />
       <AddTopicForm />
+      <SearchPanel />
     </div>
   );
 }
