@@ -62,7 +62,8 @@
   position: fixed;
   bottom: 80px;
   left: 20px;
-  right: 20px;
+  right: auto;
+  max-width: calc(100% - 100px);
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -576,7 +577,7 @@
 /* Focus indicator */
 .focus-indicator {
   position: fixed;
-  top: 20px;
+  top: 75px;
   right: 20px;
   background: rgba(0, 0, 0, 0.7);
   padding: 10px 15px;

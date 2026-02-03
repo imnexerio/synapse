@@ -3,7 +3,7 @@ import { Handle, Position } from '@xyflow/react';
 import './TopicNode2D.css';
 
 function TopicNode({ data }) {
-  const { title, tags = [], color = '#4ECDC4', degree = 0, isFocused = false } = data || {};
+  const { title, description, tags = [], color = '#4ECDC4', degree = 0, isFocused = false } = data || {};
 
   return (
     <div 
@@ -24,13 +24,21 @@ function TopicNode({ data }) {
       {/* Node content */}
       <div className="node-header" style={{ background: color }}>
         <span className="node-title">{title || 'Untitled'}</span>
-        {degree > 0 && !isFocused && (
-          <span className="node-degree">{degree}°</span>
-        )}
-        {isFocused && (
-          <span className="node-focus-badge">⭐</span>
-        )}
+        <div className="node-header-right">
+          {degree > 0 && (
+            <span className="node-degree">{degree}°</span>
+          )}
+          {isFocused && (
+            <span className="node-focus-badge">⭐</span>
+          )}
+        </div>
       </div>
+      
+      {description && (
+        <div className="node-description">
+          {description}
+        </div>
+      )}
       
       <div className="node-tags">
         {(tags || []).slice(0, 3).map((tag, i) => (

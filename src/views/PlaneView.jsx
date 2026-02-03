@@ -20,8 +20,8 @@ const nodeTypes = {
   topic: TopicNode,
 };
 
-const NODE_WIDTH = 180;
-const NODE_HEIGHT = 80;
+const NODE_WIDTH = 240;
+const NODE_HEIGHT = 120;
 
 // Apply dagre layout to nodes
 const getLayoutedElements = (nodes, edges, direction = 'TB') => {
