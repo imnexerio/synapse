@@ -105,40 +105,50 @@ const calculateSpherePositions = (visibleTopics, focusedId) => {
   return positions;
 };
 
-// Position nodes on flat plane for 2D view
+// Position nodes on flat plane for 2D mind map view (radial tree layout)
 const calculatePlanePositions = (visibleTopics, focusedId) => {
   const positions = new Map();
-  const focusedTopic = visibleTopics.find(t => t.id === focusedId);
+  
+  if (visibleTopics.length === 0) return positions;
+  
+  // If no focused topic, pick the first one
+  const actualFocusId = focusedId || visibleTopics[0]?.id;
+  const focusedTopic = visibleTopics.find(t => t.id === actualFocusId);
 
   if (!focusedTopic) return positions;
 
   // Focus node at center
-  positions.set(focusedId, [0, 0, 0]);
+  positions.set(actualFocusId, [0, 0, 0]);
 
   // Group by degree
   const byDegree = {};
   visibleTopics.forEach(topic => {
-    if (topic.id !== focusedId) {
+    if (topic.id !== actualFocusId) {
       const deg = topic.degree || 1;
       if (!byDegree[deg]) byDegree[deg] = [];
       byDegree[deg].push(topic);
     }
   });
 
-  // Position in concentric circles
-  Object.keys(byDegree).forEach(deg => {
+  // Position in concentric circles with consistent spacing
+  const degreeKeys = Object.keys(byDegree).sort((a, b) => parseInt(a) - parseInt(b));
+  
+  degreeKeys.forEach(deg => {
     const nodes = byDegree[deg];
     const degNum = parseInt(deg);
     const count = nodes.length;
-    const radius = degNum * 8; // 8 units per degree level
+    const baseRadius = 6; // Base radius for first degree
+    const radius = baseRadius + (degNum - 1) * 5; // 5 units between each degree level
+    
+    // Calculate starting angle offset for visual balance
+    const angleOffset = degNum * 0.3;
 
     nodes.forEach((topic, i) => {
-      const angle = (i / count) * Math.PI * 2;
-      const jitter = (Math.random() - 0.5) * 2;
+      const angle = angleOffset + (i / count) * Math.PI * 2;
       positions.set(topic.id, [
-        Math.cos(angle) * radius + jitter,
-        0, // Flat on Y=0
-        Math.sin(angle) * radius + jitter
+        Math.cos(angle) * radius,
+        0, // Flat on Y=0 plane
+        Math.sin(angle) * radius
       ]);
     });
   });

@@ -10,6 +10,25 @@
   position: relative;
 }
 
+/* Plane view specific - React Flow container */
+.plane-view {
+  background: #0a0a0f;
+  /* React Flow needs explicit dimensions */
+  display: flex;
+  flex-direction: column;
+}
+
+.plane-view .react-flow {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1;
+  background: #0a0a0f !important;
+}
+
+.plane-view .react-flow__background {
+  background: #0a0a0f !important;
+}
+
 /* Loading and Empty States */
 .loading-state,
 .empty-state {
