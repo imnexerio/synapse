@@ -4,6 +4,7 @@ import {
   subscribeToTopics,
   subscribeToTags,
   addTopic as firebaseAddTopic,
+  updateTopic as firebaseUpdateTopic,
   deleteTopic as firebaseDeleteTopic
 } from '../services/firebaseService';
 import {
@@ -249,6 +250,22 @@ const useStore = create((set, get) => ({
       console.error('Failed to add topic:', error);
       // Reopen form on error
       set({ showAddForm: true });
+    }
+  },
+
+  // Update existing topic (Firebase)
+  updateTopic: async (topicId, updates, oldTags, newTags) => {
+    const { user } = get();
+    if (!user) {
+      console.error('Cannot update topic: not authenticated');
+      return;
+    }
+
+    try {
+      set({ selectedNode: null });
+      await firebaseUpdateTopic(user.uid, topicId, updates, oldTags, newTags);
+    } catch (error) {
+      console.error('Failed to update topic:', error);
     }
   },
 
