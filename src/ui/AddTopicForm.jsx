@@ -96,9 +96,9 @@ export default function AddTopicForm() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Brief description..."
+              placeholder="Add a detailed description..."
               className="form-input form-textarea"
-              rows={3}
+              rows={5}
             />
           </div>
 

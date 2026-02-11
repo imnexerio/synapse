@@ -221,8 +221,8 @@ export default function SearchPanel() {
                     {topic.description && (
                       <p className="search-result-description">
                         {highlightMatch(
-                          topic.description.length > 80 
-                            ? topic.description.slice(0, 80) + '...' 
+                          topic.description.length > 200 
+                            ? topic.description.slice(0, 200) + '...' 
                             : topic.description,
                           queryLower
                         )}

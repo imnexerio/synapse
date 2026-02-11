@@ -475,7 +475,7 @@
   font-size: 14px;
   line-height: 1.6;
   resize: vertical;
-  min-height: 60px;
+  min-height: 120px;
   margin-bottom: 12px;
   box-sizing: border-box;
   font-family: inherit;
@@ -788,7 +788,8 @@
 
 .form-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 120px;
+  line-height: 1.6;
 }
 
 /* Selected tags */
@@ -1354,9 +1355,9 @@
   margin: 0 0 8px 0;
   color: rgba(255, 255, 255, 0.6);
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

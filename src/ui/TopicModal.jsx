@@ -219,7 +219,7 @@ export default function TopicModal() {
           onChange={(e) => setDescription(e.target.value)}
           className="modal-description-input"
           placeholder="Add description..."
-          rows={3}
+          rows={5}
         />
 
         {/* Editable Date */}

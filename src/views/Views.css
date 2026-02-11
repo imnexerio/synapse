@@ -145,7 +145,12 @@
   margin: 0 0 12px 0;
   color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
 }
 
 .topic-tags {
