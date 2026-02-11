@@ -220,12 +220,7 @@ export default function SearchPanel() {
                     </h4>
                     {topic.description && (
                       <p className="search-result-description">
-                        {highlightMatch(
-                          topic.description.length > 200 
-                            ? topic.description.slice(0, 200) + '...' 
-                            : topic.description,
-                          queryLower
-                        )}
+                        {highlightMatch(topic.description, queryLower)}
                       </p>
                     )}
                     <div className="search-result-tags">

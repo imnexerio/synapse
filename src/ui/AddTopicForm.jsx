@@ -76,7 +76,7 @@ export default function AddTopicForm() {
 
         <h2 className="add-form-title">Add New Topic</h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="add-form-body">
           {/* Title */}
           <div className="form-group">
             <label>Title *</label>
@@ -91,14 +91,17 @@ export default function AddTopicForm() {
           </div>
 
           {/* Description */}
-          <div className="form-group">
+          <div className="form-group form-group-grow">
             <label>Description</label>
             <textarea
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, window.innerHeight * 0.5) + 'px';
+              }}
               placeholder="Add a detailed description..."
               className="form-input form-textarea"
-              rows={5}
             />
           </div>
 

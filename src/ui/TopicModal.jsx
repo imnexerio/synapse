@@ -216,92 +216,102 @@ export default function TopicModal() {
         {/* Editable Description */}
         <textarea
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => {
+            setDescription(e.target.value);
+            e.target.style.height = 'auto';
+            e.target.style.height = Math.min(e.target.scrollHeight, window.innerHeight * 0.5) + 'px';
+          }}
+          ref={(el) => {
+            if (el) {
+              el.style.height = 'auto';
+              el.style.height = Math.min(el.scrollHeight, window.innerHeight * 0.5) + 'px';
+            }
+          }}
           className="modal-description-input"
           placeholder="Add description..."
-          rows={5}
         />
 
-        {/* Editable Date */}
-        <div className="modal-date-edit">
-          <span>📅</span>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="modal-date-input"
-          />
-        </div>
-
-        {/* Meta info (read-only) */}
-        <div className="modal-meta">
-          {topic.createdAt && (
-            <p className="modal-date">🕐 Created: {formatDate(topic.createdAt)}</p>
-          )}
-          {topic.modifiedAt && (
-            <p className="modal-date">✏️ Modified: {formatDate(topic.modifiedAt)}</p>
-          )}
-        </div>
-
-        {/* Dynamic Action Buttons */}
-        <div className="modal-actions">
-          {hasChanges ? (
-            // DISCARD + SAVE CHANGES when edits made
-            <>
-              <button 
-                className="modal-action-btn discard" 
-                onClick={handleDiscard}
-              >
-                ✕ Discard
-              </button>
-              <button 
-                className="modal-action-btn save" 
-                onClick={handleSave}
-                disabled={!isValid}
-              >
-                💾 Save Changes
-              </button>
-            </>
-          ) : (
-            // SET AS FOCUS + DELETE when no changes
-            <>
-              <button 
-                className="modal-action-btn focus" 
-                onClick={() => {
-                  setFocusedNode(topic.id);
-                  closeModal();
-                }}
-              >
-                🎯 Set as Focus
-              </button>
-              <button 
-                className="modal-action-btn delete" 
-                onClick={handleDelete}
-              >
-                🗑️ Delete
-              </button>
-            </>
-          )}
-        </div>
-
-        {/* Related Topics */}
-        {related.length > 0 && (
-          <div className="modal-related">
-            <h3>Related Topics</h3>
-            <div className="related-list">
-              {related.map((r) => (
-                <button
-                  key={r.id}
-                  className="related-item"
-                  style={{ borderLeftColor: getTopicColor(r) }}
-                  onClick={() => handleRelatedClick(r.id)}
-                >
-                  {r.title}
-                </button>
-              ))}
-            </div>
+        {/* Bottom section - stays fixed */}
+        <div className="modal-footer-section">
+          {/* Editable Date */}
+          <div className="modal-date-edit">
+            <span>📅</span>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="modal-date-input"
+            />
           </div>
-        )}
+
+          {/* Meta info (read-only) */}
+          <div className="modal-meta">
+            {topic.createdAt && (
+              <p className="modal-date">🕐 Created: {formatDate(topic.createdAt)}</p>
+            )}
+            {topic.modifiedAt && (
+              <p className="modal-date">✏️ Modified: {formatDate(topic.modifiedAt)}</p>
+            )}
+          </div>
+
+          {/* Dynamic Action Buttons */}
+          <div className="modal-actions">
+            {hasChanges ? (
+              <>
+                <button 
+                  className="modal-action-btn discard" 
+                  onClick={handleDiscard}
+                >
+                  ✕ Discard
+                </button>
+                <button 
+                  className="modal-action-btn save" 
+                  onClick={handleSave}
+                  disabled={!isValid}
+                >
+                  💾 Save Changes
+                </button>
+              </>
+            ) : (
+              <>
+                <button 
+                  className="modal-action-btn focus" 
+                  onClick={() => {
+                    setFocusedNode(topic.id);
+                    closeModal();
+                  }}
+                >
+                  🎯 Set as Focus
+                </button>
+                <button 
+                  className="modal-action-btn delete" 
+                  onClick={handleDelete}
+                >
+                  🗑️ Delete
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Related Topics */}
+          {related.length > 0 && (
+            <div className="modal-related">
+              <h3>Related Topics</h3>
+              <div className="related-list">
+                {related.map((r) => (
+                  <button
+                    key={r.id}
+                    className="related-item"
+                    style={{ borderLeftColor: getTopicColor(r) }}
+                    onClick={() => handleRelatedClick(r.id)}
+                  >
+                    {r.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
