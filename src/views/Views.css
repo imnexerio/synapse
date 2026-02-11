@@ -161,6 +161,215 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+/* ============ LIST VIEW TOOLBAR (Sort & Filter) ============ */
+.list-toolbar {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-sort-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.list-sort-label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.list-sort-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.list-sort-chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.list-sort-chip:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.list-sort-chip.active {
+  background: rgba(78, 205, 196, 0.15);
+  border-color: #4ECDC4;
+  color: #4ECDC4;
+  font-weight: 600;
+}
+
+.list-sort-order-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.list-sort-order-btn:hover {
+  border-color: #4ECDC4;
+  color: #4ECDC4;
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.list-filter-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0 0;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.list-filter-toggle:hover {
+  color: white;
+}
+
+.list-filter-toggle .toggle-arrow {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.list-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #4ECDC4;
+  color: #0a0a0f;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.list-filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.list-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.list-filter-clear {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.list-filter-clear:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.list-tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.list-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.list-tag-chip:hover {
+  border-color: var(--tag-color, rgba(255, 255, 255, 0.3));
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.list-tag-chip.active {
+  font-weight: 600;
+  color: var(--tag-color, white);
+  border-width: 2px;
+}
+
+.list-tag-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.list-tag-check {
+  font-size: 10px;
+  margin-left: 2px;
+}
+
+.list-empty-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  gap: 8px;
+}
+
+.list-empty-filter span {
+  font-size: 36px;
+}
+
+.list-empty-filter p {
+  margin: 0;
+  font-size: 15px;
+}
+
 /* ============ PROFILE VIEW ============ */
 .profile-view {
   background: #0a0a0f;

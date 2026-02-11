@@ -178,6 +178,12 @@ const useStore = create((set, get) => ({
   searchQuery: '',
   searchTagFilters: [], // Separate from activeTagFilters for search
 
+  // ============ LIST VIEW STATE ============
+  listSortField: 'createdAt',  // 'createdAt' | 'title' | 'tagsCount'
+  listSortAscending: false,
+  listTagFilters: [],           // Tag filters specific to list view
+  showListFilters: false,
+
   // ============ GRAPH STATE ============
   focusedNodeId: null,
   maxDegree: 1,
@@ -311,6 +317,18 @@ const useStore = create((set, get) => ({
       console.error('Failed to delete topic:', error);
     }
   },
+
+  // ============ LIST VIEW ACTIONS ============
+  setListSortField: (field) => set({ listSortField: field }),
+  setListSortAscending: (ascending) => set({ listSortAscending: ascending }),
+  toggleListSortOrder: () => set((state) => ({ listSortAscending: !state.listSortAscending })),
+  toggleListTagFilter: (tag) => set((state) => ({
+    listTagFilters: state.listTagFilters.includes(tag)
+      ? state.listTagFilters.filter(t => t !== tag)
+      : [...state.listTagFilters, tag]
+  })),
+  clearListFilters: () => set({ listTagFilters: [] }),
+  toggleListFiltersPanel: () => set((state) => ({ showListFilters: !state.showListFilters })),
 
   // Toggle gyro
   toggleGyro: () => set((state) => ({ gyroEnabled: !state.gyroEnabled })),
@@ -457,6 +475,40 @@ const useStore = create((set, get) => ({
     const tagSet = new Set();
     topics.forEach(topic => topic.tags.forEach(tag => tagSet.add(tag)));
     return Array.from(tagSet).sort();
+  },
+
+  // Get filtered & sorted list for ListView
+  getFilteredListTopics: () => {
+    const { topics, listSortField, listSortAscending, listTagFilters } = get();
+
+    let filtered = [...topics];
+
+    // Apply tag filters
+    if (listTagFilters.length > 0) {
+      filtered = filtered.filter(topic =>
+        topic.tags.some(tag => listTagFilters.includes(tag))
+      );
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      let cmp = 0;
+      switch (listSortField) {
+        case 'title':
+          cmp = (a.title || '').localeCompare(b.title || '');
+          break;
+        case 'tagsCount':
+          cmp = (a.tags?.length || 0) - (b.tags?.length || 0);
+          break;
+        case 'createdAt':
+        default:
+          cmp = (a.createdAt || 0) - (b.createdAt || 0);
+          break;
+      }
+      return listSortAscending ? cmp : -cmp;
+    });
+
+    return filtered;
   },
 
   // Get search results (optimistic - filters cached topics, no Firebase reads)
