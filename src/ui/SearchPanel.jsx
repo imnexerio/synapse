@@ -105,6 +105,9 @@ export default function SearchPanel() {
   return (
     <div className="search-overlay" onClick={handleOverlayClick} onKeyDown={handleKeyDown}>
       <div className="search-panel">
+        {/* Close button */}
+        <button className="search-close-btn" onClick={closeSearchPanel}>✕</button>
+
         {/* Handle indicator */}
         <div className="search-handle" />
 
