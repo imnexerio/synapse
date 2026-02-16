@@ -51,17 +51,24 @@ const SPHERE_RADIUS = 20;
 // Position nodes on a sphere - focus at south pole, others spread on surface
 const calculateSpherePositions = (visibleTopics, focusedId) => {
   const positions = new Map();
-  const focusedTopic = visibleTopics.find(t => t.id === focusedId);
+  
+  if (visibleTopics.length === 0) return positions;
+
+  // If focused topic isn't in visible set, pick first visible as anchor
+  const actualFocusId = (focusedId && visibleTopics.find(t => t.id === focusedId))
+    ? focusedId
+    : visibleTopics[0]?.id;
+  const focusedTopic = visibleTopics.find(t => t.id === actualFocusId);
 
   if (!focusedTopic) return positions;
 
   // Focus node at bottom (south pole) of sphere
-  positions.set(focusedId, [0, -SPHERE_RADIUS, 0]);
+  positions.set(actualFocusId, [0, -SPHERE_RADIUS, 0]);
 
   // Group by degree
   const byDegree = {};
   visibleTopics.forEach(topic => {
-    if (topic.id !== focusedId) {
+    if (topic.id !== actualFocusId) {
       const deg = topic.degree || 1;
       if (!byDegree[deg]) byDegree[deg] = [];
       byDegree[deg].push(topic);
@@ -414,26 +421,29 @@ const useStore = create((set, get) => ({
     // Calculate degrees from focus
     const degrees = focusedNodeId ? calculateDegrees(focusedNodeId, topics) : new Map();
 
-    // Filter by degree and tags
+    // Filter by degree or tags
     let visible = topics.filter(topic => {
       const degree = degrees.get(topic.id);
 
-      // If no focused node, show all at degree 0
+      // If tag filters are active, show all topics matching those tags (ignore degree)
+      if (activeTagFilters.length > 0) {
+        return topic.tags.some(tag => activeTagFilters.includes(tag));
+      }
+
+      // No tag filters: use degree-based filtering
       if (!focusedNodeId) return true;
 
       if (degree === undefined || degree > maxDegree) return false;
 
-      // Tag filter
-      if (activeTagFilters.length > 0) {
-        return topic.tags.some(tag => activeTagFilters.includes(tag));
-      }
       return true;
     });
 
     // Add degree info and color
+    // Unconnected topics (no degree from BFS) get a high degree so they position in outer bands
+    const maxFoundDegree = Math.max(0, ...Array.from(degrees.values()));
     visible = visible.map(topic => ({
       ...topic,
-      degree: degrees.get(topic.id) || 0,
+      degree: degrees.has(topic.id) ? degrees.get(topic.id) : maxFoundDegree + 1,
       color: getTopicColor(topic)
     }));
 

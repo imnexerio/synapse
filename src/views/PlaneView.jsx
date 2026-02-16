@@ -108,35 +108,22 @@ export default function PlaneView() {
     const effectiveFocusId = focusedNodeId || topics[0]?.id;
     const degrees = effectiveFocusId ? calculateDegrees(effectiveFocusId, topics) : new Map();
 
-    // Filter visible topics - show all if no connections exist
+    // Filter visible topics by degree or tags
     let visibleTopics = topics.filter(topic => {
       const degree = degrees.get(topic.id);
       
-      // If no focus or topic has no connections, show it anyway
-      if (!effectiveFocusId) return true;
-      
-      // Always show focused topic
-      if (topic.id === effectiveFocusId) return true;
-      
-      // If topic is not reachable via shared tags, show it at max degree + 1
-      // unless maxDegree is very restrictive
-      if (degree === undefined) {
-        return maxDegree >= 2; // Show unconnected topics if degree allows
-      }
-      
-      if (degree > maxDegree) return false;
-
-      // Tag filter
+      // If tag filters are active, show all topics matching those tags (ignore degree)
       if (activeTagFilters.length > 0) {
         return topic.tags.some(tag => activeTagFilters.includes(tag));
       }
+
+      // No tag filters: use degree-based filtering
+      if (!effectiveFocusId) return true;
+      
+      if (degree === undefined || degree > maxDegree) return false;
+
       return true;
     });
-
-    // If filter is too restrictive, at least show all topics
-    if (visibleTopics.length === 0) {
-      visibleTopics = topics;
-    }
 
     // Create nodes
     const nodes = visibleTopics.map((topic, index) => ({
